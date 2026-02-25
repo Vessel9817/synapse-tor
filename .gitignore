@@ -1,0 +1,9 @@
+*.env
+*.txt
+!*.example
+synapse
+postgres/data
+tmp
+temp
+*.tmp
+*.temp
