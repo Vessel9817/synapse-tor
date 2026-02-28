@@ -6,8 +6,6 @@ services:
       - synapse
     image: vectorim/element-web:v1.12.11@sha256:dd6696825002350e3fc7f6110ab9b4ebdf32b5c489fb195b74cff4cb1b87220a
     restart: unless-stopped
-    ports:
-      - 80:80
     volumes:
       - type: bind
         source: ./element-config.json
@@ -70,6 +68,10 @@ services:
   vanguards:
     extends:
       service: vanguards
+      file: ./onion-website/docker-compose.yml
+  nginx-debug:
+    extends:
+      service: nginx-debug
       file: ./onion-website/docker-compose.yml
 secrets:
   postgres:
