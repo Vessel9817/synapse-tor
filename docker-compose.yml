@@ -88,9 +88,6 @@ secrets:
 volumes:
   tor-data:
 networks:
-  tor:
-    enable_ipv4: true
-    enable_ipv6: false
   nginx:
     ipam:
       config:
