@@ -21,6 +21,7 @@ services:
         target: /etc/nginx/conf.d/server.conf
     networks:
       nginx:
+        # Aligns with onion-website
         ipv4_address: 10.5.0.2
   postgres:
     container_name: postgres
@@ -78,6 +79,24 @@ services:
     extends:
       service: vanguards
       file: ./onion-website/docker-compose.yml
+  metrics:
+    container_name: metrics
+    image: prom/prometheus:v3.10.0-distroless@sha256:4d2174874988fe0d8356fa5c799210767661a2ffce6bb03cdc64306f6579d7b9
+    depends_on:
+      synapse:
+        condition: service_started
+        # condition: service_healthy
+    ports:
+      - :9090
+    volumes:
+      - type: bind
+        source: ./prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: metrics
+        target: /prometheus
+    networks:
+      - nginx
   nginx-debug:
     extends:
       service: nginx-debug
@@ -87,6 +106,7 @@ secrets:
     file: ./postgres/config/
 volumes:
   tor-data:
+  metrics:
 networks:
   nginx:
     ipam:

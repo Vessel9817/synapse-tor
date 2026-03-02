@@ -1,10 +1,15 @@
+# Secrets
 *.env
 *.txt
-!*.example
 synapse
 postgres/data
+element-config.json
+
+# Templates
+!*.example
+
+# Temporary files
 tmp
 temp
 *.tmp
 *.temp
-element-config.json
