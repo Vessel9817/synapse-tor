@@ -108,6 +108,11 @@ volumes:
   tor-data:
   metrics:
 networks:
+  tor:
+    ipam:
+      config:
+        - subnet: 10.5.3.0/24 # 10.5.3.*
+          gateway: 10.5.3.1
   nginx:
     ipam:
       config:
