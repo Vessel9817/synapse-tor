@@ -1,8 +1,18 @@
-# Exposing onion site to tor network and redirecting requests to NGINX
+# Exposing hidden service to tor network
 HiddenServiceDir /var/lib/tor/website/
+
+# Redirecting requests to nginx
 HiddenServicePort 80 10.5.0.2:80
 #HiddenServicePort 443 10.5.0.2:443
 HiddenServicePort 8448 10.5.0.2:8448
+
+# Configuring Vanguards
 ControlPort 9051
 CookieAuthentication 1
 DataDirectory /var/lib/tor/data/
+
+# Making sure we don't leak DNS queries
+TestSocks 1
+
+# Disabling all connections that leak DNS queries
+SafeSocks 1
