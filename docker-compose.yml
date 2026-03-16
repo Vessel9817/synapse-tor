@@ -6,6 +6,12 @@ services:
       synapse:
         condition: service_started
         # condition: service_healthy
+    healthcheck:
+      test: [
+        'CMD-SHELL',
+        'wget -q --spider http://127.0.0.1:80/config.json'
+      ]
+      timeout: 5s
     image: vectorim/element-web:v1.12.11@sha256:dd6696825002350e3fc7f6110ab9b4ebdf32b5c489fb195b74cff4cb1b87220a
     restart: unless-stopped
     volumes:
@@ -70,8 +76,7 @@ services:
       file: ./onion-website/docker-compose.yml
     depends_on:
       nginx:
-        condition: service_started
-        # condition: service_healthy
+        condition: service_healthy
     build:
       context: ./tor
       dockerfile: ../onion-website/src/tor/Dockerfile
@@ -79,13 +84,21 @@ services:
     extends:
       service: vanguards
       file: ./onion-website/docker-compose.yml
-  metrics:
-    container_name: metrics
+  prometheus:
+    container_name: prometheus
     image: prom/prometheus:v3.10.0-distroless@sha256:4d2174874988fe0d8356fa5c799210767661a2ffce6bb03cdc64306f6579d7b9
+    restart: unless-stopped
     depends_on:
       synapse:
         condition: service_started
         # condition: service_healthy
+        required: false
+    healthcheck:
+      test: [
+        "CMD",
+        "promtool", "check", "healthy"
+      ]
+      timeout: 3s
     ports:
       - :9090
     volumes:
@@ -96,7 +109,8 @@ services:
         source: metrics
         target: /prometheus
     networks:
-      - nginx
+      nginx:
+        ipv4_address: 10.5.0.253
   nginx-debug:
     extends:
       service: nginx-debug
@@ -111,10 +125,12 @@ networks:
   tor:
     ipam:
       config:
+        # Aligns with onion-website
         - subnet: 10.5.3.0/24 # 10.5.3.*
           gateway: 10.5.3.1
   nginx:
     ipam:
       config:
+        # Aligns with onion-website
         - subnet: 10.5.0.0/24 # 10.5.0.*
           gateway: 10.5.0.1
