@@ -133,7 +133,12 @@ services:
       GF_SECURITY_ADMIN_USER: $$__file{/run/secrets/admin_user.txt}
       GF_SECURITY_ADMIN_PASSWORD: $$__file{/run/secrets/admin_pass.txt}
       GF_SECURITY_ADMIN_EMAIL: $$__file{/run/secrets/admin_email.txt}
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning/
     volumes:
+      - type: bind
+        source: ./grafana/datasources.yml
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+        read_only: true
       - type: volume
         source: grafana-storage
         target: /var/lib/grafana/
