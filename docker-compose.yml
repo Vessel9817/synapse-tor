@@ -134,10 +134,16 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: $$__file{/run/secrets/admin_pass.txt}
       GF_SECURITY_ADMIN_EMAIL: $$__file{/run/secrets/admin_email.txt}
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning/
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/synapse.json
+      GF_ANALYTICS_REPORTING_ENABLED: false # Anonymous usage statistics
     volumes:
       - type: bind
         source: ./grafana/datasources.yml
         target: /etc/grafana/provisioning/datasources/datasources.yml
+        read_only: true
+      - type: bind
+        source: ./grafana/synapse.json
+        target: /etc/grafana/provisioning/dashboards/synapse.json
         read_only: true
       - type: volume
         source: grafana-storage
