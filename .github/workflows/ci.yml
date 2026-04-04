@@ -1,11 +1,16 @@
+name: CI
+
 on:
   push:
+  pull_request:
 
 env:
   DOCKER_COMPOSE_VERSION: v5.1.0
 
 jobs:
   build:
+    permissions:
+      contents: read
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
