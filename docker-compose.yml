@@ -161,7 +161,6 @@ secrets:
   grafana:
     file: ./grafana/secrets/
 volumes:
-  tor-data:
   prometheus:
   grafana-storage:
 networks:
