@@ -8,7 +8,7 @@ services:
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:80/config.json']
       timeout: 5s
-    image: vectorim/element-web:v1.12.12@sha256:3f031bba174a062d21dcb506662031ce717586c05c03d018063c19470941ac70
+    image: vectorim/element-web:v1.12.18
     restart: unless-stopped
     volumes:
       - type: bind
@@ -26,7 +26,7 @@ services:
         ipv4_address: 10.5.0.2
   postgres:
     container_name: postgres
-    image: postgres:14.22-trixie@sha256:705a5d5b5836f3fcba0d02c4d281e6a7dd9ed2dd4078640f08a1e1e9896e097d
+    image: postgres:14.23-trixie
     healthcheck:
       test: [
         'CMD',
@@ -53,7 +53,7 @@ services:
         ipv4_address: 10.5.0.4
   synapse:
     container_name: synapse
-    image: matrixdotorg/synapse:v1.149.1@sha256:dcab93b1183b296b3bc50767813e4a2337a7cb4a9b89a5e6af5fe9b69a43618c
+    image: matrixdotorg/synapse:v1.152.1
     depends_on:
       postgres:
         condition: service_healthy
@@ -101,7 +101,7 @@ services:
     container_name: prometheus
     profiles:
       - production
-    image: prom/prometheus:v3.10.0-distroless@sha256:4d2174874988fe0d8356fa5c799210767661a2ffce6bb03cdc64306f6579d7b9
+    image: prom/prometheus:v3-distroless
     restart: unless-stopped
     depends_on:
       synapse:
@@ -129,7 +129,7 @@ services:
     container_name: grafana
     profiles:
       - production
-    image: grafana/grafana:12.4.1@sha256:e932bd6ed0e026595b08483cd0141e5103e1ab7ff8604839ff899b8dc54cabcb
+    image: grafana/grafana:13.0.1
     restart: unless-stopped
     depends_on:
       prometheus:
