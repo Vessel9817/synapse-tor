@@ -6,10 +6,7 @@ services:
       synapse:
         condition: service_healthy
     healthcheck:
-      test: [
-        'CMD-SHELL',
-        'wget -q --spider http://127.0.0.1:80/config.json'
-      ]
+      test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:80/config.json']
       timeout: 5s
     image: vectorim/element-web:v1.12.12@sha256:3f031bba174a062d21dcb506662031ce717586c05c03d018063c19470941ac70
     restart: unless-stopped
@@ -26,7 +23,6 @@ services:
         target: /etc/nginx/conf.d/server.conf
     networks:
       nginx:
-        # Aligns with onion-website
         ipv4_address: 10.5.0.2
   postgres:
     container_name: postgres
@@ -58,8 +54,6 @@ services:
   synapse:
     container_name: synapse
     image: matrixdotorg/synapse:v1.149.1@sha256:dcab93b1183b296b3bc50767813e4a2337a7cb4a9b89a5e6af5fe9b69a43618c
-    links:
-      - postgres
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,24 +67,40 @@ services:
         ipv4_address: 10.5.0.3
   tor:
     extends:
+      file: ./onion-website/src/docker-compose.yml
       service: tor
-      file: ./onion-website/docker-compose.yml
+    profiles:
+      - production
     depends_on:
       nginx:
         condition: service_healthy
+    healthcheck:
+      # Makes sure the hidden service is reachable
+      test: [
+        'CMD-SHELL',
+        'curl -s --socks4a 10.5.3.2:9050 "$(cat /var/lib/tor/website/hostname)" >/dev/null'
+      ]
+      interval: 10s
+      timeout: 120s
+      start_period: 20s
     volumes:
       - type: bind
         source: ./tor/torrc
         target: /etc/tor/torrc
+      # Path defined by torrc
       - type: bind
         source: ./onion-website/src/tor/secrets/
-        # Path defined by torrc
         target: /var/lib/tor/website/
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
     networks:
+      tor:
+        ipv4_address: 10.5.3.2
       nginx:
-        ipv4_address: 10.5.0.5
   prometheus:
     container_name: prometheus
+    profiles:
+      - production
     image: prom/prometheus:v3.10.0-distroless@sha256:4d2174874988fe0d8356fa5c799210767661a2ffce6bb03cdc64306f6579d7b9
     restart: unless-stopped
     depends_on:
@@ -117,6 +127,8 @@ services:
         ipv4_address: 10.6.0.2
   grafana:
     container_name: grafana
+    profiles:
+      - production
     image: grafana/grafana:12.4.1@sha256:e932bd6ed0e026595b08483cd0141e5103e1ab7ff8604839ff899b8dc54cabcb
     restart: unless-stopped
     depends_on:
@@ -153,8 +165,20 @@ services:
         ipv4_address: 10.6.0.3
   nginx-debug:
     extends:
-      service: nginx-debug
-      file: ./onion-website/docker-compose.yml
+      file: ./onion-website/src/docker-compose.yml
+      service: container-link
+    container_name: nginx-debug
+    profiles:
+      - development
+    depends_on:
+      - nginx
+    environment:
+      - FORWARD_ADDR=10.5.0.2:80
+    ports:
+      - :80
+    networks:
+      nginx:
+        ipv4_address: 10.5.0.254
 secrets:
   postgres:
     file: ./postgres/config/
@@ -167,13 +191,11 @@ networks:
   tor:
     ipam:
       config:
-        # Aligns with onion-website
         - subnet: 10.5.3.0/24 # 10.5.3.*
           gateway: 10.5.3.1
   nginx:
     ipam:
       config:
-        # Aligns with onion-website
         - subnet: 10.5.0.0/24 # 10.5.0.*
           gateway: 10.5.0.1
   metrics:
