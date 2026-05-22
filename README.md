@@ -51,9 +51,13 @@ There are some issues that should be noted when running this service over tor:
   [UDP support][udp] is implemented in the tor network. It's been
   [over 20 years][udp-2006], I wouldn't wait around if I were you.
 
-Users can enable these features in `about:config`, at the risk of reducing
-their security and privacy.
-*Not recommended unless you know exactly what you're doing.*
+> [!CAUTION]
+> *Do not attempt unless you know exactly what you're doing.*
+
+Users can enable some of these features in `about:config` by reversing
+some of the steps detailed in
+[The Design and Implementation of the Tor Browser][tor-spec],
+at the risk of compromising privacy and security.
 
 ## Implementation
 
@@ -77,6 +81,7 @@ This project follows the same dual-licensing scheme as [Synapse][licenses]. I.e:
 [webrtc]: https://forum.torproject.org/t/safe-way-to-user-webrtc/2231
 [udp]: https://spec.torproject.org/proposals/339-udp-over-tor.html
 [udp-2006]: https://spec.torproject.org/proposals/100-tor-spec-udp.html
+[tor-spec]: https://2019.www.torproject.org/projects/torbrowser/design/
 
 [synapse]: https://blog.facha.dev/how-to-self-host-matrix-and-element-docker-compose/
 [federation]: https://element-hq.github.io/synapse/latest/reverse_proxy.html
