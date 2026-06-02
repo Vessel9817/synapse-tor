@@ -6,39 +6,40 @@
 
 1. Clone the repository and initialize its submodules:
 
-  ```shell
-  git clone --recursive https://github.com/Vessel9817/synapse-tor
-  ```
+    ```shell
+    git clone --recursive https://github.com/Vessel9817/synapse-tor
+    ```
 
 1. Enter the top-level project directory:
 
-  ```shell
-  cd './synapse-tor'
-  ```
+    ```shell
+    cd './synapse-tor'
+    ```
 
 <!-- TODO -->
+
 1. Configure secrets:
 
-  ```shell
-  cp './grafana/secrets/admin_user.txt.example' './grafana/secrets/admin_user.txt'
-  cp './grafana/secrets/admin_pass.txt.example' './grafana/secrets/admin_pass.txt'
-  cp './grafana/secrets/admin_email.txt.example' './grafana/secrets/admin_email.txt'
-  cp './postgres/config/db.txt.example' './postgres/config/db.txt'
-  cp './postgres/config/user.txt.example' './postgres/config/user.txt'
-  cp './postgres/config/password.txt.example' './postgres/config/password.txt'
-  ```
+    ```shell
+    cp './grafana/secrets/admin_user.txt.example' './grafana/secrets/admin_user.txt'
+    cp './grafana/secrets/admin_pass.txt.example' './grafana/secrets/admin_pass.txt'
+    cp './grafana/secrets/admin_email.txt.example' './grafana/secrets/admin_email.txt'
+    cp './postgres/config/db.txt.example' './postgres/config/db.txt'
+    cp './postgres/config/user.txt.example' './postgres/config/user.txt'
+    cp './postgres/config/password.txt.example' './postgres/config/password.txt'
+    ```
 
 1. Run the service:
 
-  ```shell
-  docker compose up -d grafana tor
-  ```
+    ```shell
+    docker compose up -d grafana tor
+    ```
 
 1. Stop the service:
 
-  ```shell
-  docker compose down
-  ```
+    ```shell
+    docker compose down
+    ```
 
 [!TIP]
 
@@ -54,15 +55,15 @@ the configuration steps with your domain, rather than an `.onion` address.
 
 1. Run the service:
 
-  ```shell
-  docker compose --profile production up -d nginx-debug
-  ```
+    ```shell
+    docker compose --profile production up -d nginx-debug
+    ```
 
 1. Stop the service:
 
-  ```shell
-  docker compose --profile production down
-  ```
+    ```shell
+    docker compose --profile production down
+    ```
 
 See the `nginx-debug` container for an example of how to forward traffic
 from your machine to the service. You can change the `ports` section to use
