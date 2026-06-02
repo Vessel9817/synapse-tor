@@ -71,6 +71,7 @@ services:
       service: tor
     profiles:
       - production
+      - tor
     depends_on:
       nginx:
         condition: service_healthy
