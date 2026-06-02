@@ -33,7 +33,7 @@ services:
         'pg_isready', '-q', '-t', '3'
       ]
       start_period: 5s
-      interval: 5s
+      interval: 10s
     restart: unless-stopped
     shm_size: 128mb
     volumes:

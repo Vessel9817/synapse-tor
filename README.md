@@ -31,13 +31,48 @@
 1. Run the service:
 
   ```shell
-  docker compose --profile production up -d
+  docker compose up -d grafana tor
   ```
+
+1. Stop the service:
+
+  ```shell
+  docker compose down
+  ```
+
+[!TIP]
+
+> Shutting down the Postgres service in other ways may result in the service
+> being interrupted. This may cause startup time to take significantly longer,
+> which may cause health checks to fail until it's finished.
 
 ## Running without tor
 
-By removing the `tor`, `tor-init` and `vanguards` containers from
-[`docker-compose.yml`](./docker-compose.yml)
+This project can be run without tor, however, you'll need to expose the website
+to the internet through your own means. You'll also need to go through
+the configuration steps with your domain, rather than an `.onion` address.
+
+1. Run the service:
+
+  ```shell
+  docker compose --profile production up -d nginx-debug
+  ```
+
+1. Stop the service:
+
+  ```shell
+  docker compose --profile production down
+  ```
+
+See the `nginx-debug` container for an example of how to forward traffic
+from your machine to the service. You can change the `ports` section to use
+a fixed host port, following Docker's port mapping syntax:
+`<HOST_PORT>:<CONTAINER_PORT>` or `<HOST_IP>:<HOST_PORT>:<CONTAINER_PORT>`.
+
+[!WARNING]
+
+> In case you accidentally expose your Grafana endpoint over the internet,
+> make sure your login credentials are secure.
 
 ## Running over tor
 
