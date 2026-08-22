@@ -16,7 +16,16 @@
     cd './synapse-tor'
     ```
 
-<!-- TODO -->
+1. Generate an onion address:
+
+    ```shell
+    docker compose -f './onion-website/src/tor/docker-compose.yml' up -d
+    docker compose -f './onion-website/src/tor/docker-compose.yml' down
+    ```
+
+    Your address is in `./onion-website/src/tor/secrets/hostname`, which tor
+    leaves readable only by root. Existing keys can be placed in that
+    directory instead.
 
 1. Configure secrets:
 
@@ -28,6 +37,45 @@
     cp './postgres/config/user.txt.example' './postgres/config/user.txt'
     cp './postgres/config/password.txt.example' './postgres/config/password.txt'
     ```
+
+1. Configure Element, replacing the placeholder address with your own:
+
+    ```shell
+    cp './element-config.json.example' './element-config.json'
+    ```
+
+1. Generate the Synapse configuration:
+
+    ```shell
+    docker compose run --rm --no-deps \
+        -e SYNAPSE_SERVER_NAME="$(sudo cat './onion-website/src/tor/secrets/hostname')" \
+        -e SYNAPSE_REPORT_STATS=no \
+        synapse generate
+    ```
+
+1. As root, edit `./synapse/homeserver.yaml` to point the `database` section
+   at Postgres and add a metrics listener for Prometheus:
+
+    ```yaml
+    database:
+      name: psycopg2
+      args:
+        user: synapse
+        password: STRONGPASSWORD
+        dbname: synapse
+        host: postgres
+        cp_min: 5
+        cp_max: 10
+
+    enable_metrics: true
+    listeners:
+      # ...
+      - port: 9000
+        type: metrics
+    ```
+
+    The `user`, `password` and `dbname` values are the contents of
+    `./postgres/config/`.
 
 1. Run the service:
 
