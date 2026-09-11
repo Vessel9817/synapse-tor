@@ -1,6 +1,6 @@
 # synapse-tor
 
-[![AGPL-3.0-or-later license][license-badge]](LICENSE)
+[![AGPL-3.0-or-later license][license-badge]](LICENSE-AGPL-3.0)
 [![CI][ci-badge]][ci-workflow]
 
 ## Licensing
