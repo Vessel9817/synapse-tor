@@ -9,6 +9,7 @@ env:
   DOCKER_COMPOSE_VERSION: v5.5.1
 
 jobs:
+  # Builds the compose project
   build:
     permissions:
       contents: read
@@ -27,4 +28,4 @@ jobs:
         with:
           version: ${{ env.DOCKER_COMPOSE_VERSION }}
       - name: Build Compose stack
-        run: docker compose --profile production --profile development build
+        run: docker compose --profile production --profile development --profile monitor build
