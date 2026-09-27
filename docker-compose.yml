@@ -138,7 +138,7 @@ services:
         condition: service_healthy
         required: false
     ports:
-      - ':3000'
+      - '127.0.0.1::3000'
     # https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#override-configuration-with-environment-variables
     environment:
       GF_SECURITY_ADMIN_USER: $$__file{/run/secrets/admin_user.txt}
@@ -147,6 +147,9 @@ services:
       GF_PATHS_PROVISIONING: /etc/grafana/provisioning/
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/synapse.json
       GF_ANALYTICS_REPORTING_ENABLED: false # Anonymous usage statistics
+      # Mitigate network discovery
+      GF_AUTH_ANONYMOUS_HIDE_VERSION: true
+      GF_METRICS_ENABLED: false
     volumes:
       - type: bind
         source: ./grafana/datasources.yml
@@ -177,7 +180,7 @@ services:
     environment:
       - FORWARD_ADDR=10.5.0.2:80
     ports:
-      - :80
+      - 127.0.0.1::80
     networks:
       nginx:
         ipv4_address: 10.5.0.254
