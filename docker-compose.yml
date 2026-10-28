@@ -53,7 +53,7 @@ services:
         ipv4_address: 10.5.0.4
   synapse:
     container_name: synapse
-    image: matrixdotorg/synapse:v1.163.2
+    image: matrixdotorg/synapse:v1.164.0
     depends_on:
       postgres:
         condition: service_healthy
