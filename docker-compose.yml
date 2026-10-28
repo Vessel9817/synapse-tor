@@ -8,7 +8,7 @@ services:
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:80/config.json']
       timeout: 5s
-    image: vectorim/element-web:v1.12.32
+    image: vectorim/element-web:v1.12.33
     restart: unless-stopped
     volumes:
       - type: bind
