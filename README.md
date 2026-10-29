@@ -17,7 +17,16 @@
     cd './synapse-tor'
     ```
 
-<!-- TODO -->
+1. Generate an onion address:
+
+    ```shell
+    docker compose -f './onion-website/src/tor/docker-compose.yml' up -d
+    docker compose -f './onion-website/src/tor/docker-compose.yml' down
+    ```
+
+    Your address is in `./onion-website/src/tor/secrets/hostname`, which tor
+    leaves readable only by root. Existing keys can be placed in that
+    directory instead.
 
 1. Configure secrets:
 
@@ -29,6 +38,50 @@
     cp './postgres/config/user.txt.example' './postgres/config/user.txt'
     cp './postgres/config/password.txt.example' './postgres/config/password.txt'
     ```
+
+    > [!CAUTION]
+    > Never use the example credentials. Always set your own values.
+
+1. Configure Element, replacing the placeholder address
+    `abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh.onion`
+    with your own:
+
+    ```shell
+    cp './element-config.json.example' './element-config.json'
+    ```
+
+1. Generate the Synapse configuration:
+
+    ```shell
+    docker compose run --rm --no-deps \
+        -e SYNAPSE_SERVER_NAME="$(sudo cat './onion-website/src/tor/secrets/hostname')" \
+        -e SYNAPSE_REPORT_STATS=no \
+        synapse generate
+    ```
+
+1. Edit `./synapse/homeserver.yaml` to point the `database` section
+   at Postgres and add a metrics listener for Prometheus:
+
+    ```yaml
+    database:
+      name: psycopg2
+      args:
+        user: synapse
+        password: STRONGPASSWORD
+        dbname: synapse
+        host: postgres
+        cp_min: 5
+        cp_max: 10
+
+    enable_metrics: true
+    listeners:
+      # ...
+      - port: 9000
+        type: metrics
+    ```
+
+    The `user`, `password` and `dbname` values should reflect the values
+    previously set in `./postgres/config/*.txt`.
 
 1. Run the service:
 
@@ -42,8 +95,7 @@
     docker compose --profile production down
     ```
 
-[!TIP]
-
+> [!TIP]
 > Shutting down the Postgres service in other ways may result in the service
 > being interrupted. This may cause startup time to take significantly longer,
 > which may cause health checks to fail until it's finished.
@@ -72,8 +124,7 @@ from your machine to the service. You can change the `ports` section to use
 a fixed host port, following Docker's port mapping syntax:
 `<HOST_PORT>:<CONTAINER_PORT>` or `<HOST_IP>:<HOST_PORT>:<CONTAINER_PORT>`.
 
-[!WARNING]
-
+> [!WARNING]
 > In case you accidentally expose your Grafana endpoint over the internet,
 > make sure your login credentials are secure.
 
@@ -82,20 +133,21 @@ a fixed host port, following Docker's port mapping syntax:
 There are some issues that should be noted when running this service over tor:
 
 - [Service workers][service workers] are required to use
-  [authenticated media][authenticated media]. Tor browser disables this feature
+  [authenticated media][authenticated media]. Tor Browser disables this feature
   by default.
-- [WebRTC][webrtc] is required to use voice and video calls. Tor browser
+- [WebRTC][webrtc] is required to use voice and video calls. Tor Browser
   disables this feature by default, but it may be considered if
   [UDP support][udp] is implemented in the tor network. It's been
   [over 20 years][udp-2006], I wouldn't wait around if I were you.
 
 > [!CAUTION]
-> *Do not attempt unless you know exactly what you're doing.*
+> *Do not attempt unless you're an expert.*
+> Your privacy and security is at risk if you change these settings.
 
 Users can enable some of these features in `about:config` by reversing
 some of the steps detailed in
-[The Design and Implementation of the Tor Browser][tor-spec],
-at the risk of compromising privacy and security.
+[The Design and Implementation of the Tor Browser][tor-spec].
+That document also outlines why those features are disabled.
 
 ## Implementation
 
@@ -132,4 +184,5 @@ This project follows the same dual-licensing scheme as [Synapse][licenses]. I.e:
 [consoles]: https://github.com/element-hq/synapse/blob/master/contrib/prometheus/README.md
 [turn server]: https://element-hq.github.io/synapse/latest/turn-howto.html
 [workers]: https://github.com/element-hq/synapse/blob/master/contrib/docker_compose_workers/README.md
+
 [licenses]: [https://github.com/element-hq/synapse/?tab=readme-ov-file#copyright-and-licensing]
