@@ -39,7 +39,12 @@
     cp './postgres/config/password.txt.example' './postgres/config/password.txt'
     ```
 
-1. Configure Element, replacing the placeholder address with your own:
+    > [!CAUTION]
+    > Never use the example credentials. Always set your own values.
+
+1. Configure Element, replacing the placeholder address
+    `abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh.onion`
+    with your own:
 
     ```shell
     cp './element-config.json.example' './element-config.json'
@@ -54,7 +59,7 @@
         synapse generate
     ```
 
-1. As root, edit `./synapse/homeserver.yaml` to point the `database` section
+1. Edit `./synapse/homeserver.yaml` to point the `database` section
    at Postgres and add a metrics listener for Prometheus:
 
     ```yaml
@@ -75,8 +80,8 @@
         type: metrics
     ```
 
-    The `user`, `password` and `dbname` values are the contents of
-    `./postgres/config/`.
+    The `user`, `password` and `dbname` values should reflect the values
+    previously set in `./postgres/config/*.txt`.
 
 1. Run the service:
 
@@ -90,8 +95,7 @@
     docker compose --profile production down
     ```
 
-[!TIP]
-
+> [!TIP]
 > Shutting down the Postgres service in other ways may result in the service
 > being interrupted. This may cause startup time to take significantly longer,
 > which may cause health checks to fail until it's finished.
@@ -120,8 +124,7 @@ from your machine to the service. You can change the `ports` section to use
 a fixed host port, following Docker's port mapping syntax:
 `<HOST_PORT>:<CONTAINER_PORT>` or `<HOST_IP>:<HOST_PORT>:<CONTAINER_PORT>`.
 
-[!WARNING]
-
+> [!WARNING]
 > In case you accidentally expose your Grafana endpoint over the internet,
 > make sure your login credentials are secure.
 
@@ -130,20 +133,21 @@ a fixed host port, following Docker's port mapping syntax:
 There are some issues that should be noted when running this service over tor:
 
 - [Service workers][service workers] are required to use
-  [authenticated media][authenticated media]. Tor browser disables this feature
+  [authenticated media][authenticated media]. Tor Browser disables this feature
   by default.
-- [WebRTC][webrtc] is required to use voice and video calls. Tor browser
+- [WebRTC][webrtc] is required to use voice and video calls. Tor Browser
   disables this feature by default, but it may be considered if
   [UDP support][udp] is implemented in the tor network. It's been
   [over 20 years][udp-2006], I wouldn't wait around if I were you.
 
 > [!CAUTION]
-> *Do not attempt unless you know exactly what you're doing.*
+> *Do not attempt unless you're an expert.*
+> Your privacy and security is at risk if you change these settings.
 
 Users can enable some of these features in `about:config` by reversing
 some of the steps detailed in
-[The Design and Implementation of the Tor Browser][tor-spec],
-at the risk of compromising privacy and security.
+[The Design and Implementation of the Tor Browser][tor-spec].
+That document also outlines why those features are disabled.
 
 ## Implementation
 
