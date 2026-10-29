@@ -184,4 +184,5 @@ This project follows the same dual-licensing scheme as [Synapse][licenses]. I.e:
 [consoles]: https://github.com/element-hq/synapse/blob/master/contrib/prometheus/README.md
 [turn server]: https://element-hq.github.io/synapse/latest/turn-howto.html
 [workers]: https://github.com/element-hq/synapse/blob/master/contrib/docker_compose_workers/README.md
+
 [licenses]: [https://github.com/element-hq/synapse/?tab=readme-ov-file#copyright-and-licensing]

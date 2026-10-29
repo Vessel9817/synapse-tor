@@ -1,0 +1,49 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "git-submodules": {
+    "enabled": true
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Docker Engine version used by CI",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "DOCKER_VERSION: (?<currentValue>v\\S+)"
+      ],
+      "depNameTemplate": "docker",
+      "packageNameTemplate": "moby/moby",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^docker-(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Docker Compose version used by CI",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "DOCKER_COMPOSE_VERSION: (?<currentValue>v\\S+)"
+      ],
+      "depNameTemplate": "docker/compose",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "description": "markdownlint-cli2 schema version",
+      "managerFilePatterns": [
+        "/^src/markdownlint/\\.markdownlint-cli2\\.jsonc$/"
+      ],
+      "matchStrings": [
+        "https://raw\\.githubusercontent\\.com/DavidAnson/markdownlint-cli2/(?<currentValue>v\\S+)/schema/markdownlint-cli2-config-schema\\.json"
+      ],
+      "depNameTemplate": "DavidAnson/markdownlint-cli2",
+      "datasourceTemplate": "github-tags"
+    }
+  ]
+}
